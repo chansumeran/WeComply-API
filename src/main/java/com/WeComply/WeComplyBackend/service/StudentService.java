@@ -1,5 +1,6 @@
 package com.WeComply.WeComplyBackend.service;
 
+import com.WeComply.WeComplyBackend.dto.FilteredStudentResponse;
 import com.WeComply.WeComplyBackend.dto.GetAllStudentResponse;
 import com.WeComply.WeComplyBackend.entity.Student;
 
@@ -11,7 +12,7 @@ public interface StudentService {
 
     Optional<Student> getStudentWithSanction(Integer studentId);
 
-    List<Student> getFilteredStudents(String deptCode, String course, Integer yearLevel);
+    List<FilteredStudentResponse> getFilteredStudents(String deptCode, String course, Integer yearLevel, String eventCode);
 
     List<GetAllStudentResponse> getAllStudents();
 //

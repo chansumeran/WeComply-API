@@ -1,5 +1,7 @@
 package com.WeComply.WeComplyBackend.service;
 
+import com.WeComply.WeComplyBackend.dto.FilteredStudentResponse;
+import com.WeComply.WeComplyBackend.dto.FormattedStudentResponse;
 import com.WeComply.WeComplyBackend.dto.GetAllStudentResponse;
 import com.WeComply.WeComplyBackend.entity.Sanction;
 import com.WeComply.WeComplyBackend.entity.Student;
@@ -30,8 +32,34 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getFilteredStudents(String deptCode, String course, Integer yearLevel) {
-        return studentRepository.findByDynamicFilters(deptCode, course, yearLevel);
+    public List<FilteredStudentResponse> getFilteredStudents(String deptCode, String course, Integer yearLevel, String eventCode) {
+
+        List<Student> filteredStudents  = studentRepository.findByDynamicFilters(deptCode, course, yearLevel, eventCode);
+
+        List<FilteredStudentResponse> studentResponses = new ArrayList<>();
+
+        for (Student student : filteredStudents) {
+            // get info to be passed in the dto
+            Integer studentId = student.getStudentId();
+            String fullName = student.getFirstName() + " " + student.getLastName();
+            String department = student.getDepartment().getDepartmentCode();
+            String studentCourse = student.getCourse();
+            Integer studentYearLevel = student.getYearLevel();
+            Integer totalAbsences = calculateOverallAbsences(studentId);
+            Sanction sanction = assignSanction(totalAbsences);
+
+            FilteredStudentResponse studentResponse = new FilteredStudentResponse();
+            studentResponse.setStudentId(studentId);
+            studentResponse.setFullName(fullName);
+            studentResponse.setDepartment(department);
+            studentResponse.setCourse(studentCourse);
+            studentResponse.setYearLevel(studentYearLevel);
+            studentResponse.setTotalAbsences(totalAbsences);
+            studentResponse.setSanction(sanction);
+            studentResponses.add(studentResponse);
+        }
+
+        return studentResponses;
     }
 
     @Override

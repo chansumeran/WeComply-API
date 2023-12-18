@@ -1,5 +1,7 @@
 package com.WeComply.WeComplyBackend.controller;
 
+import com.WeComply.WeComplyBackend.dto.FilteredStudentResponse;
+import com.WeComply.WeComplyBackend.dto.FormattedStudentResponse;
 import com.WeComply.WeComplyBackend.dto.GetAllStudentResponse;
 import com.WeComply.WeComplyBackend.dto.StudentResponse;
 import com.WeComply.WeComplyBackend.entity.Sanction;
@@ -34,15 +36,17 @@ public class StudentController {
 
     // ADVANCED FILTER
     @GetMapping("/filter")
-    public ResponseEntity<List<Student>> getAdvanceFilteredStudents(
+    public ResponseEntity<List<FilteredStudentResponse>> getAdvanceFilteredStudents(
             @RequestParam(name = "departmentCode", required = false) String deptCode,
             @RequestParam(name = "course", required = false) String course,
-            @RequestParam(name = "yearLevel", required = false) Integer yearLevel) {
+            @RequestParam(name = "yearLevel", required = false) Integer yearLevel,
+            @RequestParam(name = "eventCode", required = false) String eventCode) {
 
-        List<Student> students = studentService.getFilteredStudents(deptCode, course, yearLevel);
+        List<FilteredStudentResponse> students = studentService.getFilteredStudents(deptCode, course, yearLevel, eventCode);
 
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
+
 
     @GetMapping("/all")
     public ResponseEntity<List<GetAllStudentResponse>> getAllStudents() {
