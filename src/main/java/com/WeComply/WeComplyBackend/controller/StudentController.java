@@ -1,5 +1,6 @@
 package com.WeComply.WeComplyBackend.controller;
 
+import com.WeComply.WeComplyBackend.dto.GetAllStudentResponse;
 import com.WeComply.WeComplyBackend.dto.StudentResponse;
 import com.WeComply.WeComplyBackend.entity.Student;
 import com.WeComply.WeComplyBackend.service.AttendanceServiceImpl;
@@ -35,8 +36,8 @@ public class StudentController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Student>> getAllStudents() {
-        List<Student> allStudents = studentService.getAllStudents();
+    public ResponseEntity<List<GetAllStudentResponse>> getAllStudents() {
+        List<GetAllStudentResponse> allStudents = studentService.getAllStudents();
 
         return new ResponseEntity<>(allStudents, HttpStatus.OK);
     }

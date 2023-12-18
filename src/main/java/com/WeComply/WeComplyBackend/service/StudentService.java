@@ -1,5 +1,6 @@
 package com.WeComply.WeComplyBackend.service;
 
+import com.WeComply.WeComplyBackend.dto.GetAllStudentResponse;
 import com.WeComply.WeComplyBackend.entity.Student;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface StudentService {
 
     List<Student> getFilteredStudents(String deptCode, String course, Integer yearLevel);
 
-    List<Student> getAllStudents();
+    List<GetAllStudentResponse> getAllStudents();
 //
 //    List<Student> getStudentsByEvent(String eventName);
 

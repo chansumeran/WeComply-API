@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StudentResponse {
+public class GetAllStudentResponse {
 
     private Integer studentId;
 
@@ -20,10 +20,6 @@ public class StudentResponse {
     private Integer yearLevel;
 
     private Integer totalAbsences;
-
-    private String info;
-
-    private Integer sanctionId;
 
     private String sanctionDescription;
 
