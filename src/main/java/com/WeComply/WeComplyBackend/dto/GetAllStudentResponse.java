@@ -1,5 +1,6 @@
 package com.WeComply.WeComplyBackend.dto;
 
+import com.WeComply.WeComplyBackend.entity.Sanction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,8 +22,10 @@ public class GetAllStudentResponse {
 
     private Integer totalAbsences;
 
-    private Integer sanctionId;
+//    private Integer sanctionId;
+//
+//    private String sanctionDescription;
 
-    private String sanctionDescription;
+    private Sanction sanction;
 
 }

@@ -48,8 +48,7 @@ public class StudentServiceImpl implements StudentService {
             String course = student.getCourse();
             Integer yearLevel = student.getYearLevel();
             Integer totalAbsences = calculateOverallAbsences(studentId);
-            Integer sanctionId = student.getSanction().getSanctionId();
-            String sanction = assignSanction(totalAbsences);
+            Sanction sanction = assignSanction(totalAbsences);
 
             GetAllStudentResponse studentResponse = new GetAllStudentResponse();
             studentResponse.setStudentId(studentId);
@@ -58,29 +57,28 @@ public class StudentServiceImpl implements StudentService {
             studentResponse.setCourse(course);
             studentResponse.setYearLevel(yearLevel);
             studentResponse.setTotalAbsences(totalAbsences);
-            studentResponse.setSanctionId(sanctionId);
-            studentResponse.setSanctionDescription(sanction);
+            studentResponse.setSanction(sanction);
             studentResponses.add(studentResponse);
         }
         return studentResponses;
     }
 
-    private String assignSanction(Integer absences) {
+    private Sanction assignSanction(Integer absences) {
         // This will return all sanctions in the database
         List<Sanction> sanctions = sanctionRepository.findAll();
 
-        String sanctionDesc = "No Sanction"; // Default value if absences are 0 or negative
+        Sanction matchedSanction = null;
 
         if (absences > 0) {
             for (Sanction sanction : sanctions) {
                 // Compare absences with trigger values
                 if (absences >= sanction.getTriggerValue()) {
-                    sanctionDesc = sanction.getDescription();
+                    matchedSanction = sanction;
                 }
             }
         }
 
-        return sanctionDesc;
+        return matchedSanction;
     }
 
 
