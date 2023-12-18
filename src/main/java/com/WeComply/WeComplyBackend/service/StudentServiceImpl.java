@@ -48,6 +48,7 @@ public class StudentServiceImpl implements StudentService {
             String course = student.getCourse();
             Integer yearLevel = student.getYearLevel();
             Integer totalAbsences = calculateOverallAbsences(studentId);
+            Integer sanctionId = student.getSanction().getSanctionId();
             String sanction = assignSanction(totalAbsences);
 
             GetAllStudentResponse studentResponse = new GetAllStudentResponse();
@@ -57,6 +58,7 @@ public class StudentServiceImpl implements StudentService {
             studentResponse.setCourse(course);
             studentResponse.setYearLevel(yearLevel);
             studentResponse.setTotalAbsences(totalAbsences);
+            studentResponse.setSanctionId(sanctionId);
             studentResponse.setSanctionDescription(sanction);
             studentResponses.add(studentResponse);
         }

@@ -21,6 +21,8 @@ public class GetAllStudentResponse {
 
     private Integer totalAbsences;
 
+    private Integer sanctionId;
+
     private String sanctionDescription;
 
 }
