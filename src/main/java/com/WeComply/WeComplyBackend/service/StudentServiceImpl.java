@@ -60,6 +60,7 @@ public class StudentServiceImpl implements StudentService {
             studentResponse.setSanction(sanction);
             studentResponses.add(studentResponse);
         }
+
         return studentResponses;
     }
 
@@ -81,7 +82,6 @@ public class StudentServiceImpl implements StudentService {
         return matchedSanction;
     }
 
-
     private Integer calculateOverallAbsences(Integer studentId) {
         Integer absences = attendanceRepository.calculateOverall(studentId);
 
@@ -91,7 +91,4 @@ public class StudentServiceImpl implements StudentService {
 
         return absences;
     }
-
-
-
 }

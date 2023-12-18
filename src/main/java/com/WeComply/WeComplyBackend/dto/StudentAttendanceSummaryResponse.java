@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class StudentAttendanceSummaryResponse {
 
-    private StudentResponse studentResponse;
+    private FormattedStudentResponse studentResponse;
     private List<AttendanceResponse> attendanceSummaryList;
 
 }

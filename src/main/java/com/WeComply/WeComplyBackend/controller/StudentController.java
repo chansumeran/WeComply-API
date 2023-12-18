@@ -2,7 +2,10 @@ package com.WeComply.WeComplyBackend.controller;
 
 import com.WeComply.WeComplyBackend.dto.GetAllStudentResponse;
 import com.WeComply.WeComplyBackend.dto.StudentResponse;
+import com.WeComply.WeComplyBackend.entity.Sanction;
 import com.WeComply.WeComplyBackend.entity.Student;
+import com.WeComply.WeComplyBackend.repository.AttendanceRepository;
+import com.WeComply.WeComplyBackend.repository.SanctionRepository;
 import com.WeComply.WeComplyBackend.service.AttendanceServiceImpl;
 import com.WeComply.WeComplyBackend.service.StudentServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,12 @@ public class StudentController {
 
     @Autowired
     private AttendanceServiceImpl attendanceService;
+
+    @Autowired
+    private SanctionRepository sanctionRepository;
+
+    @Autowired
+    private AttendanceRepository attendanceRepository;
 
     // ADVANCED FILTER
     @GetMapping("/filter")
@@ -52,16 +61,46 @@ public class StudentController {
 
         Student student = studentWithSanction.get();
 
+        Integer studentId = student.getStudentId();
         String fullName = student.getFirstName() + " " + student.getLastName();
         String info = student.getDepartmentCode() + ", " + student.getCourse() + "-" + student.getYearLevel();
-        String sanctionDescription = student.getSanction().getDescription();
+        Integer totalAbsences = calculateOverallAbsences(studentId);
+        Sanction sanction = assignSanction(totalAbsences);
 
         StudentResponse studentResponse = new StudentResponse();
         studentResponse.setFullName(fullName);
         studentResponse.setInfo(info);
-        studentResponse.setSanctionDescription(sanctionDescription);
+        studentResponse.setSanction(sanction);
 
         return new ResponseEntity<>(studentResponse, HttpStatus.OK);
+    }
+
+    private Sanction assignSanction(Integer absences) {
+        // This will return all sanctions in the database
+        List<Sanction> sanctions = sanctionRepository.findAll();
+
+        Sanction matchedSanction = null;
+
+        if (absences > 0) {
+            for (Sanction sanction : sanctions) {
+                // Compare absences with trigger values
+                if (absences >= sanction.getTriggerValue()) {
+                    matchedSanction = sanction;
+                }
+            }
+        }
+
+        return matchedSanction;
+    }
+
+    private Integer calculateOverallAbsences(Integer studentId) {
+        Integer absences = attendanceRepository.calculateOverall(studentId);
+
+        if (absences == null) {
+            return 0;
+        }
+
+        return absences;
     }
 
 }
