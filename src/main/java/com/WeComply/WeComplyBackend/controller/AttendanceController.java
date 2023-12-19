@@ -24,10 +24,4 @@ public class AttendanceController {
         attendanceService.calculateTotalAbsences();
     }
 
-    @GetMapping("/summary/{studentId}")
-    public ResponseEntity<List<AttendanceResponse>> getAttendanceSummaryByStudentId(@PathVariable Integer studentId) {
-        List<AttendanceResponse> attendanceSummaryList = attendanceService.getAttendanceSummary(studentId);
-        return new ResponseEntity<>(attendanceSummaryList, HttpStatus.OK);
-    }
-
 }

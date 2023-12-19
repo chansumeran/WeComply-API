@@ -10,6 +10,5 @@ public interface SanctionService {
     void updateSanctionDescriptions(List<SanctionUpdateRequest> updateRequests);
 
     void updateSanctionTriggers(List<SanctionUpdateRequest> updateRequests);
-
     void resetSanctionConfig();
 }

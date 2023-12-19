@@ -42,9 +42,9 @@ public class SanctionServiceImpl implements SanctionService {
 
     @Override
     public void resetSanctionConfig() {
-        resetSanctionValuesById(1, 1, "Warning");
-        resetSanctionValuesById(2, 4, "Counselling");
-        resetSanctionValuesById(3, 7, "Payment");
+        resetSanctionValuesById(2, 1, "Warning");
+        resetSanctionValuesById(3, 4, "Counselling");
+        resetSanctionValuesById(4, 7, "Payment");
     }
 
     private void resetSanctionValuesById(int sanctionId, int trigger, String description) {

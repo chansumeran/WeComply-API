@@ -10,25 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StudentResponse {
 
-    private Integer studentId;
-
     private String fullName;
-
-    private String department;
-
-    private String course;
-
-    private Integer yearLevel;
-
-    private Integer totalAbsences;
 
     private String info;
 
     private Sanction sanction;
-
-    private Integer sanctionId;
-
-    private String sanctionDescription;
-
 
 }

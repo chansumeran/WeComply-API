@@ -4,8 +4,8 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    password: gb4daBEE4AbC4C-F-f336A12HAfE1cfA
-    url: jdbc:mysql://viaduct.proxy.rlwy.net:37365/railway
+    password: Ef-431HGbdgAH4g2B6cgdEF4ehe2Cgb5
+    url: jdbc:mysql://viaduct.proxy.rlwy.net:54518/railway
     username: root
   jpa:
     hibernate:

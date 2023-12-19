@@ -1,8 +1,7 @@
 package com.WeComply.WeComplyBackend.service;
 
-import com.WeComply.WeComplyBackend.dto.FilteredStudentResponse;
-import com.WeComply.WeComplyBackend.dto.FormattedStudentResponse;
 import com.WeComply.WeComplyBackend.dto.GetAllStudentResponse;
+import com.WeComply.WeComplyBackend.dto.StudentResponse;
 import com.WeComply.WeComplyBackend.entity.Sanction;
 import com.WeComply.WeComplyBackend.entity.Student;
 import com.WeComply.WeComplyBackend.repository.AttendanceRepository;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -32,23 +32,23 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<FilteredStudentResponse> getFilteredStudents(String deptCode, String course, Integer yearLevel, String eventCode) {
+    public List<GetAllStudentResponse> getFilteredStudents(String deptCode, String course, Integer yearLevel, String eventCode) {
 
         List<Student> filteredStudents  = studentRepository.findByDynamicFilters(deptCode, course, yearLevel, eventCode);
 
-        List<FilteredStudentResponse> studentResponses = new ArrayList<>();
+        List<GetAllStudentResponse> studentResponses = new ArrayList<>();
 
         for (Student student : filteredStudents) {
             // get info to be passed in the dto
             Integer studentId = student.getStudentId();
             String fullName = student.getFirstName() + " " + student.getLastName();
-            String department = student.getDepartment().getDepartmentCode();
-            String studentCourse = student.getCourse();
+            String department = student.getCourse().getDepartment().getDepartmentCode();
+            String studentCourse = student.getCourse().getCourseCode();
             Integer studentYearLevel = student.getYearLevel();
             Integer totalAbsences = calculateOverallAbsences(studentId);
             Sanction sanction = assignSanction(totalAbsences);
 
-            FilteredStudentResponse studentResponse = new FilteredStudentResponse();
+            GetAllStudentResponse studentResponse = new GetAllStudentResponse();
             studentResponse.setStudentId(studentId);
             studentResponse.setFullName(fullName);
             studentResponse.setDepartment(department);
@@ -63,33 +63,55 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public Optional<StudentResponse> getStudentSummary(Integer studentId) {
+        Optional<Student> studentWithSanction = getStudentWithSanction(studentId);
+
+        if (studentWithSanction.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Student student = studentWithSanction.get();
+
+        Integer studentID = student.getStudentId();
+        String fullName = student.getFirstName() + " " + student.getMiddleInitial() + ". " + student.getLastName();
+        String info = student.getCourse().getDepartment().getDepartmentCode() + ", " + student.getCourse().getCourseCode() + "-" + student.getYearLevel();
+        Integer totalAbsences = calculateOverallAbsences(studentID);
+        Sanction sanction = assignSanction(totalAbsences);
+
+        StudentResponse studentResponse = new StudentResponse();
+        studentResponse.setFullName(fullName);
+        studentResponse.setInfo(info);
+        studentResponse.setSanction(sanction);
+
+        return Optional.of(studentResponse);
+    }
+
+    @Override
     public List<GetAllStudentResponse> getAllStudents() {
         List<Student> students = studentRepository.findAll();
 
-        List<GetAllStudentResponse> studentResponses = new ArrayList<>();
+        return students.stream().map(this::mapToStudentResponsesDto).collect(Collectors.toList());
+    }
 
-        for (Student student : students) {
-            // get info to be passed in the dto
-            Integer studentId = student.getStudentId();
-            String fullName = student.getFirstName() + " " + student.getLastName();
-            String department = student.getDepartment().getDepartmentCode();
-            String course = student.getCourse();
-            Integer yearLevel = student.getYearLevel();
-            Integer totalAbsences = calculateOverallAbsences(studentId);
-            Sanction sanction = assignSanction(totalAbsences);
+    private GetAllStudentResponse mapToStudentResponsesDto(Student student) {
+        Integer studentId = student.getStudentId();
+        String fullName = student.getFirstName() + " " + student.getLastName();
+        String department = student.getCourse().getDepartment().getDepartmentCode();
+        String course = student.getCourse().getCourseCode();
+        Integer yearLevel = student.getYearLevel();
+        Integer totalAbsences = calculateOverallAbsences(studentId);
+        Sanction sanction = assignSanction(totalAbsences);
 
-            GetAllStudentResponse studentResponse = new GetAllStudentResponse();
-            studentResponse.setStudentId(studentId);
-            studentResponse.setFullName(fullName);
-            studentResponse.setDepartment(department);
-            studentResponse.setCourse(course);
-            studentResponse.setYearLevel(yearLevel);
-            studentResponse.setTotalAbsences(totalAbsences);
-            studentResponse.setSanction(sanction);
-            studentResponses.add(studentResponse);
-        }
+        GetAllStudentResponse studentResponse = new GetAllStudentResponse();
+        studentResponse.setStudentId(studentId);
+        studentResponse.setFullName(fullName);
+        studentResponse.setDepartment(department);
+        studentResponse.setCourse(course);
+        studentResponse.setYearLevel(yearLevel);
+        studentResponse.setTotalAbsences(totalAbsences);
+        studentResponse.setSanction(sanction);
 
-        return studentResponses;
+        return studentResponse;
     }
 
     private Sanction assignSanction(Integer absences) {

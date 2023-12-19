@@ -10,9 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AttendanceResponse {
-
     private LocalDate date;
     private String eventName;
     private Integer totalAbsences;
-
 }
