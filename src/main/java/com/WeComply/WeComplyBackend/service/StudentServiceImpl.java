@@ -36,6 +36,15 @@ public class StudentServiceImpl implements StudentService {
 
         List<Student> filteredStudents  = studentRepository.findByDynamicFilters(deptCode, course, yearLevel, eventCode);
 
+        return filteredStudents.stream().map(this::mapToStudentResponsesDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<StudentResponse> getStudentSummary(Integer studentId) {
+        Optional<Student> studentWithSanction = getStudentWithSanction(studentId);
+
+        if (studentWithSanction.isEmpty()) {
+            return Optional.empty();
         List<GetAllStudentResponse> studentResponses = new ArrayList<>();
 
         for (Student student : filteredStudents) {
@@ -59,12 +68,28 @@ public class StudentServiceImpl implements StudentService {
             studentResponses.add(studentResponse);
         }
 
-        return studentResponses;
+        Student student = studentWithSanction.get();
+
+        Integer studentID = student.getStudentId();
+        String fullName = student.getFirstName() + " " + student.getMiddleInitial() + ". " + student.getLastName();
+        String info = student.getCourse().getDepartment().getDepartmentCode() + ", " + student.getCourse().getCourseCode() + "-" + student.getYearLevel();
+        Integer totalAbsences = calculateOverallAbsences(studentID);
+        Sanction sanction = assignSanction(totalAbsences);
+
+        StudentResponse studentResponse = new StudentResponse();
+        studentResponse.setFullName(fullName);
+        studentResponse.setInfo(info);
+        studentResponse.setSanction(sanction);
+
+        return Optional.of(studentResponse);
     }
 
     @Override
     public Optional<StudentResponse> getStudentSummary(Integer studentId) {
         Optional<Student> studentWithSanction = getStudentWithSanction(studentId);
+
+        return students.stream().map(this::mapToStudentResponsesDto).collect(Collectors.toList());
+    }
 
         if (studentWithSanction.isEmpty()) {
             return Optional.empty();
@@ -92,7 +117,7 @@ public class StudentServiceImpl implements StudentService {
 
         return students.stream().map(this::mapToStudentResponsesDto).collect(Collectors.toList());
     }
-
+  
     private GetAllStudentResponse mapToStudentResponsesDto(Student student) {
         Integer studentId = student.getStudentId();
         String fullName = student.getFirstName() + " " + student.getLastName();
